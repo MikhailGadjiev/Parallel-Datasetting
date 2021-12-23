@@ -1,0 +1,67 @@
+Вызов скрипта:
+./task2.sh -d "dataset.csv" -t 70 -y "dummy"
+
+
+#!/bin/bash
+
+# processing options
+while [[ $# -ge 2 ]]; do
+  opt="$1"
+
+  case $opt in
+    -d|--data)
+      DATA="$2"
+      shift # move to next option
+      shift # move to next value
+      ;;
+    -t|--train_ratio)
+      RATIO="$2"
+      shift # move to next option
+      shift # move to next value
+      ;;
+    -y|--y_column)
+      Y_COLUMN="$2"
+      shift # move to next option
+      shift # move to next value
+      ;;
+  esac
+done
+
+# split data
+row_count = $(wc -l <"$DATA")
+
+# exclude header row from total count
+((row_count--))
+
+train_count = $(($RATIO * row_count / 100))
+test_count = $((row_count - train_count))
+
+# create files
+head -n $(($train_count + 1)) "$DATA" > "./train.csv"
+
+# first adding header to file
+head -n 1 "DATA" > "./test.csv"
+# then data
+tail -n $test_count "DATA" >> "./test.csv"
+case $opt in
+    -d|--data)
+      DATA="$2"
+      shift # move to next option
+      shift # move to next value
+      ;;
+    -t|--train_ratio)
+      RATIO="$2"
+      shift # move to next option
+      shift # move to next value
+      ;;
+    -y|--y_column)
+      Y_COLUMN="$2"
+      shift # move to next option
+      shift # move to next value
+      ;;
+    *)
+      ;;
+  esac
+
+*)
+      ;;
