@@ -1,0 +1,44 @@
+Вызов скрипта:
+./task2.sh -w 5 -c link -d "./Output"
+
+#!/bin/bash
+
+# processing options
+while [[ $# -gt 0 ]]
+do
+    opt=$1
+    case $opt in
+        -w|--workers_count)
+            WORKERS_COUNT=$2
+            shift # move to next option
+            shift # move to next value
+            ;;
+        -c|--column)
+            COLUMN=$2
+            shift # move to next option
+            shift # move to next value
+            ;;
+        -d|--dir)
+            DIR=$2
+            shift # move to next option
+            shift # move to next value
+            ;;
+        *)
+            ;;
+    esac
+done
+
+# declaring source file
+dataset = 'dataset.csv'
+
+# getting destination column number
+column_number=$(head -n 1 $dataset | tr -s ';' '\n' | nl -nln | grep -w "$COLUMN" | cut -f1)
+
+# getting array of links from dataset
+links=$(cut -d ';' -f $column_number $dataset)
+
+# downloading links for workers count
+for i in $(seq 1 $WORKERS_COUNT)
+do
+    $links[i] | parallel -j ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downloads} {}
+done
