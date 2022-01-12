@@ -26,7 +26,7 @@ do
 done
 
 # declaring source file
-dataset = 'dataset.csv'
+dataset='dataset.csv'
 
 # getting destination column number
 column_number=$(head -n 1 $dataset | tr -s ';' '\n' | nl -nln | grep -w "$COLUMN" | cut -f1)
