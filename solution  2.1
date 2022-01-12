@@ -32,5 +32,8 @@ links=( $(cut -d ';' -f ${COLUMN_INDEX:-2} $dataset) )
 # remove first array item (column name)
 links=("${links[@]:1}")
 
-#run download
+#run download GNU parallel
 parallel -j ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downloads} ::: "${links[@]}"
+
+#run download xargs
+#echo "${links[@]}" | xargs -n 1 -P ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downloads}
