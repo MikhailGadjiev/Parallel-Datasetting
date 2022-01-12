@@ -23,6 +23,9 @@ do
     esac
 done
 
+#download dataset
+wget -q "https://raw.githubusercontent.com/MikhailGadjiev/Task2-TRUE/master/dataset.csv"
+
 # declaring source file
 dataset='dataset.csv'
 
@@ -36,4 +39,4 @@ links=("${links[@]:1}")
 parallel -j ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downloads} ::: "${links[@]}"
 
 #run download xargs
-#echo "${links[@]}" | xargs -n 1 -P ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downloads}
+#echo "${links[@]}" | xargs -n 1 -P ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downl
