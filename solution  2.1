@@ -10,8 +10,8 @@ do
             shift # move to next option
             shift # move to next value
             ;;
-        -c|--column)
-            COLUMN=$2
+        -c|--column_index)
+            COLUMN_INDEX=$2
             shift # move to next option
             shift # move to next value
             ;;
@@ -20,22 +20,17 @@ do
             shift # move to next option
             shift # move to next value
             ;;
-        *)
-            ;;
     esac
 done
 
 # declaring source file
 dataset='dataset.csv'
 
-# getting destination column number
-column_number=$(head -n 1 $dataset | tr -s ';' '\n' | nl -nln | grep -w "$COLUMN" | cut -f1)
-
 # getting array of links from dataset
-links=$(cut -d ';' -f $column_number $dataset)
+links=( $(cut -d ';' -f ${COLUMN_INDEX:-2} $dataset) )
 
-# downloading links for workers count
-for i in $(seq 1 $WORKERS_COUNT)
-do
-    $links[i] | parallel -j ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downloads} {}
-done
+# remove first array item (column name)
+links=("${links[@]:1}")
+
+#run download
+parallel -j ${WORKERS_COUNT:-4} wget -q -P ${DIR:-downloads} ::: "${links[@]}"
